@@ -1,21 +1,34 @@
 import requests
 import pandas as pd
 
-scheme_code = 125497
+SCHEMES = {
+    "HDFC_Top100": 125497,
+    "SBI_Bluechip": 119551,
+    "ICICI_Bluechip": 120503,
+    "Nippon_Large_Cap": 118632,
+    "Axis_Bluechip": 119092,
+    "Kotak_Bluechip": 120841
+}
 
-url = f"https://api.mfapi.in/mf/{scheme_code}"
+for fund_name, scheme_code in SCHEMES.items():
 
-response = requests.get(url)
+    url = f"https://api.mfapi.in/mf/{scheme_code}"
 
-data = response.json()
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
 
-latest_nav = data["data"][0]
+        data = response.json()
 
-df = pd.DataFrame([latest_nav])
+        latest_nav = data["data"][0]
 
-df.to_csv(
-    "data/raw/HDFC_Top100_Live_NAV.csv",
-    index=False
-)
+        df = pd.DataFrame([latest_nav])
 
-print("NAV saved successfully")
+        output_file = f"data/raw/{fund_name}_Live_NAV.csv"
+
+        df.to_csv(output_file, index=False)
+
+        print(f"✅ Saved: {output_file}")
+
+    except Exception as e:
+        print(f"❌ Error fetching {fund_name}: {e}")
