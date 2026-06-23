@@ -30,3 +30,7 @@ for file in csv_files:
 
     except Exception as e:
         print("Error:", e)
+print("\nDuplicate Rows:")
+print(df.duplicated().sum())
+print("\nMissing Values:")
+print(df.isnull().sum().sum())
